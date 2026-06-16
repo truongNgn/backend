@@ -5,8 +5,11 @@ import { BaseEntity } from './base.entitiy';
 @Entity()
 export class Todo extends BaseEntity {
 
-  @Column({length: 100})
+  @Column({ length: 100 })
   title: string;
+
+  @Column({ type: 'text', nullable: true })
+  description?: string;
 
   @Column({ default: false })
   completed: boolean;
@@ -33,7 +36,4 @@ export class Todo extends BaseEntity {
 
   @Column({ type: 'timestamp', nullable: true })
   dueDate: Date;
-
-  @Column({type: 'uuid', nullable: true })
-  userId: string;
 }

@@ -11,8 +11,8 @@ export class TodoService {
     private readonly todoRepository: Repository<Todo>,
   ) { }
 
-  async create(createTodoDto: CreateTodoDto, userId?: string): Promise<Todo> { //CREATE
-    const { title, description, priority, dueDate } = createTodoDto;
+  async create(createTodoDto: CreateTodoDto): Promise<Todo> { //CREATE
+    const { title, description, priority, dueDate, userId } = createTodoDto;
     const todo = this.todoRepository.create({
       title,
       description,
@@ -21,9 +21,7 @@ export class TodoService {
       userId,
     });
 
-    if (!userId){
-      throw new NotFoundException(`Không tìm thấy người dùng`);
-    }
+
     return this.todoRepository.save(todo);
   }
 
