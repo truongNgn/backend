@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Todo } from '../todo.entity';
+import { Todo } from '../entities/todo.entity';
 
 @Injectable()
 export class TodoService {
@@ -23,7 +23,7 @@ export class TodoService {
     });
   }
 
-  async findOne(id: number): Promise<Todo> {  //READ SINGLE by id
+  async findOne(id: string): Promise<Todo> {  //READ SINGLE by id
     const todo = await this.todoRepository.findOneBy({ id });
     if (!todo) {
       throw new NotFoundException(`Todo with ID ${id} not found`);
@@ -31,13 +31,13 @@ export class TodoService {
     return todo;
   }
 
-  async update(id: number, attrs: Partial<Todo>): Promise<Todo> { //UPDATE by id 
+  async update(id: string, attrs: Partial<Todo>): Promise<Todo> { //UPDATE by id 
     const todo = await this.findOne(id);
     Object.assign(todo, attrs);
     return this.todoRepository.save(todo);
   }
 
-  async remove(id: number): Promise<void> { //DELETE by id
+  async remove(id: string): Promise<void> { //DELETE by id
     const todo = await this.findOne(id);
     await this.todoRepository.remove(todo);
   }

@@ -2,8 +2,6 @@ import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeor
 import { BaseEntity } from './base.entitiy';
 @Entity()
 export class Todo extends BaseEntity {
-  @PrimaryGeneratedColumn()
-  id: number;
 
   @Column()
   title: string;
@@ -11,6 +9,4 @@ export class Todo extends BaseEntity {
   @Column({ default: false })
   completed: boolean;
 
-  @CreateDateColumn()
-  createdAt: Date;
 }

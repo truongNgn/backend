@@ -1,5 +1,5 @@
 import { DataSource } from 'typeorm';
-import { Todo } from './todo/todo.entity';
+import { Todo } from './entities/todo.entity';
 
 export default new DataSource({
   type: 'postgres',

@@ -1,6 +1,6 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe } from '@nestjs/common';
 import { TodoService } from './todo.service';
-import { Todo } from '../todo.entity';
+import { Todo } from '../entities/todo.entity';
 
 @Controller('todo')
 export class TodoController {
@@ -18,14 +18,14 @@ export class TodoController {
 
   @Patch(':id') //U -> UPDATE by id
   update(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseUUIDPipe) id: string,
     @Body() attrs: Partial<Todo>,
   ): Promise<Todo> {
     return this.todoService.update(id, attrs);
   }
 
   @Delete(':id') //D -> DELETE by id
-  remove(@Param('id', ParseIntPipe) id: number): Promise<void> {
+  remove(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
     return this.todoService.remove(id);
   }
 }
