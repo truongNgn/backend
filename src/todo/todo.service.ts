@@ -20,6 +20,10 @@ export class TodoService {
       dueDate: dueDate ? new Date(dueDate) : undefined,
       userId,
     });
+
+    if (!userId){
+      throw new NotFoundException(`Không tìm thấy người dùng`);
+    }
     return this.todoRepository.save(todo);
   }
 

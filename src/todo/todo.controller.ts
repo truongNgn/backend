@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe, Request } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe, Request, UnauthorizedException } from '@nestjs/common';
 import { TodoService } from './todo.service';
 import { Todo } from '../entities/todo.entity';
 import { CreateTodoDto } from './dto/create-todo.dto';
@@ -9,7 +9,11 @@ export class TodoController {
 
   @Post() //C -> CREATE
   create(@Body() createTodoDto: CreateTodoDto, @Request() req: any): Promise<Todo> {
+
     const userId = req.user?.id;
+    if (!userId) {
+      throw new UnauthorizedException('User ID is required');
+    }
     return this.todoService.create(createTodoDto, userId);
   }
 

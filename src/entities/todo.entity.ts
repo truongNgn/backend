@@ -34,5 +34,6 @@ export class Todo extends BaseEntity {
   @Column({ type: 'timestamp', nullable: true })
   dueDate: Date;
 
- 
+  @Column({type: 'uuid', nullable: true })
+  userId: string;
 }
