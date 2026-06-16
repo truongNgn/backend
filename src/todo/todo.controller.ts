@@ -1,14 +1,19 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe, BadRequestException } from '@nestjs/common';
 import { TodoService } from './todo.service';
 import { Todo } from '../entities/todo.entity';
+import { CreateTodoDto } from './dto/create-todo.dto';
 
-@Controller('todo')
+@Controller('todos')
 export class TodoController {
   constructor(private readonly todoService: TodoService) { }
 
   @Post() //C -> CREATE
-  create(@Body('title') title: string, @Body('completed') completed?: boolean): Promise<Todo> {
-    return this.todoService.create(title, completed);
+  create(@Body() createTodoDto: CreateTodoDto): Promise<Todo> {
+    const { userId } = createTodoDto;
+    if (!userId) {
+      throw new BadRequestException('The provided parameters are invalid. User ID is required');
+    }
+    return this.todoService.create(createTodoDto);
   }
 
   @Get() //R -> READ ALL
@@ -25,7 +30,7 @@ export class TodoController {
   }
 
   @Delete(':id') //D -> DELETE by id
-  remove(@Param('id', ParseUUIDPipe) id: string): Promise<void> {
+  remove(@Param('id', ParseUUIDPipe) id: string): Promise<Todo> {
     return this.todoService.remove(id);
   }
 }
