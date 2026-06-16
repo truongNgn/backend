@@ -1,10 +1,11 @@
-import { Entity, Column, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, JoinColumn, ManyToOne, CreateDateColumn } from 'typeorm';
 import { User } from './user.entity';
+import { TodoStatus, TodoPriority } from '../todo/enums/todo.enum';
 import { BaseEntity } from './base.entitiy';
-
 @Entity()
 export class Todo extends BaseEntity {
-  @Column()
+
+  @Column({length: 100})
   title: string;
 
   @Column({ default: false })
@@ -16,4 +17,22 @@ export class Todo extends BaseEntity {
 
   @Column({ nullable: true })
   userId: string;
+  @Column({
+    type: 'enum',
+    enum: TodoStatus,
+    default: TodoStatus.PENDING,
+  })
+  status: TodoStatus;
+
+  @Column({
+    type: 'enum',
+    enum: TodoPriority,
+    default: TodoPriority.MEDIUM,
+  })
+  priority: TodoPriority;
+
+  @Column({ type: 'timestamp', nullable: true })
+  dueDate: Date;
+
+ 
 }

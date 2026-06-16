@@ -12,6 +12,7 @@ describe('TodoService', () => {
     find: jest.fn(),
     findOneBy: jest.fn(),
     remove: jest.fn(),
+    softRemove: jest.fn(),
   };
 
   beforeEach(async () => {
