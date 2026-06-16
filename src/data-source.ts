@@ -1,6 +1,7 @@
 import { DataSource } from 'typeorm';
 import { config } from 'dotenv';
-import { Todo } from './todo/todo.entity';
+import { Todo } from './entities/todo.entity';
+import { User } from './user/user.entity';
 
 config();
 
@@ -11,7 +12,7 @@ export default new DataSource({
   username: process.env.DB_USERNAME,
   password: process.env.DB_PASSWORD,
   database: process.env.DB_NAME,
-  entities: [Todo],
+  entities: [Todo, User],
   migrations: ['src/migrations/*.ts'],
   synchronize: true,
 });

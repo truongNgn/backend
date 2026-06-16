@@ -1,19 +1,14 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, OneToMany } from 'typeorm';
-import { Todo } from '../todo/todo.entity';
+import { Entity, Column, OneToMany } from 'typeorm';
+import { Todo } from '../entities/todo.entity';
+import { BaseEntity } from '../entities/base.entitiy';
 
 @Entity()
-export class User {
-  @PrimaryGeneratedColumn()
-  id: number;
-
+export class User extends BaseEntity {
   @Column()
   firstName: string;
 
   @Column()
   lastName: string;
-
-  @CreateDateColumn()
-  createdAt: Date;
 
   @OneToMany(() => Todo, (todo) => todo.user)
   todos: Todo[];
