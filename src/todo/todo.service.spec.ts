@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TodoService } from './todo.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
-import { Todo } from './todo.entity';
+import { Todo } from '../todo.entity';
 
 describe('TodoService', () => {
   let service: TodoService;
