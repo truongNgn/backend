@@ -6,6 +6,7 @@ export class CreateTodoDto {
   @IsString()
   @MaxLength(100)
   title: string;
+  uuid: string;
 
   @IsOptional()
   @IsString()
@@ -17,4 +18,7 @@ export class CreateTodoDto {
 
   @IsDateString()
   dueDate: string;
+
+  @IsString()
+  userId: string;
 }
