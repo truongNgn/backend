@@ -18,22 +18,22 @@ export class UserService {
   }
 
   findAll() {
-    return this.userRepository.find({ relations: ['todos'] });
+    return this.userRepository.find({ relations: { todos: true } });
   }
 
-  async findOne(id: number) {
-    const user = await this.userRepository.findOne({ where: { id }, relations: ['todos'] });
+  async findOne(id: string) {
+    const user = await this.userRepository.findOne({ where: { id }, relations: { todos: true } });
     if (!user) throw new NotFoundException(`User #${id} not found`);
     return user;
   }
 
-  async update(id: number, dto: UpdateUserDto) {
+  async update(id: string, dto: UpdateUserDto) {
     await this.findOne(id);
     await this.userRepository.update(id, dto);
     return this.findOne(id);
   }
 
-  async remove(id: number) {
+  async remove(id: string) {
     const user = await this.findOne(id);
     return this.userRepository.remove(user);
   }
