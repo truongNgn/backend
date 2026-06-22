@@ -1,7 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe, BadRequestException, Query } from '@nestjs/common';
 import { TodoService } from './todo.service';
 import { Todo } from '../entities/todo.entity';
 import { CreateTodoDto } from './dto/create-todo.dto';
+import { UpdateTodoDto } from './dto/update-todo.dto'
+import { QueryTodoDto } from './dto/query-todo.dto';
 
 @Controller('todos')
 export class TodoController {
@@ -17,16 +19,18 @@ export class TodoController {
   }
 
   @Get() //R -> READ ALL
-  findAll(): Promise<Todo[]> {
-    return this.todoService.findAll();
+  findAll(@Query() query :QueryTodoDto): Promise<{data : Todo[]; page :number ; limit: number; total:number}> {
+    return this.todoService.findAll(
+      query
+    );
   }
 
   @Patch(':id') //U -> UPDATE by id
   update(
     @Param('id', ParseUUIDPipe) id: string,
-    @Body() attrs: Partial<Todo>,
+    @Body() updateTodoDto : UpdateTodoDto,
   ): Promise<Todo> {
-    return this.todoService.update(id, attrs);
+    return this.todoService.update(id, updateTodoDto);
   }
 
   @Delete(':id') //D -> DELETE by id
