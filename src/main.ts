@@ -6,7 +6,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.enableCors({ origin: 'http://localhost:3000' });
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe({ transform: true }));
   // Swagger / OpenAPI setup - enabled in all environments
   const config = new DocumentBuilder()
     .setTitle('API')

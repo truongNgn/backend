@@ -3,6 +3,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Todo } from '../entities/todo.entity';
 import { CreateTodoDto } from './dto/create-todo.dto';
+import { UpdateTodoDto } from './dto/update-todo.dto'
+import { QueryTodoDto } from './dto/query-todo.dto';
 
 @Injectable()
 export class TodoService {
@@ -25,12 +27,18 @@ export class TodoService {
     return this.todoRepository.save(todo);
   }
 
-  async findAll(): Promise<Todo[]> { //READ ALL
-    return this.todoRepository.find({
-      order: {
-        createdAt: 'DESC',
-      },
-    });
+  async findAll(queryToDoDto: QueryTodoDto): Promise<{data: Todo[]; page: number; limit: number; total: number}> { //READ ALL
+    // return this.todoRepository.find({
+    //   order: {
+    //     createdAt: 'DESC',
+    //   },
+    // });
+    const {page, limit } =queryToDoDto;
+    const [data, total]= await this.todoRepository.findAndCount({
+      skip: (page -1) * limit,
+      take: limit,
+    })
+    return { data, page , limit , total }
   }
 
   async findOne(id: string): Promise<Todo> {  //READ SINGLE by id
@@ -41,9 +49,9 @@ export class TodoService {
     return todo;
   }
 
-  async update(id: string, attrs: Partial<Todo>): Promise<Todo> { //UPDATE by id 
+  async update(id: string, updateTodoDto: UpdateTodoDto): Promise<Todo> { //UPDATE by id 
     const todo = await this.findOne(id);
-    Object.assign(todo, attrs);
+    Object.assign(todo, updateTodoDto);
     return this.todoRepository.save(todo);
   }
 

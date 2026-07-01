@@ -1,98 +1,78 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Backend (Task Manager API)
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+REST API built with NestJS + TypeORM + PostgreSQL, providing `Todo` and `User` resources for the Task Manager app.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Tech stack
 
-## Description
+- NestJS 11 (Express platform)
+- TypeORM + PostgreSQL (`pg`)
+- class-validator / class-transformer for DTO validation
+- Swagger (`@nestjs/swagger`) for API docs
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Requirements
 
-## Project setup
+- Node.js 18+
+- A running PostgreSQL instance
+
+## Setup
 
 ```bash
-$ npm install
+npm install
+cp .env.example .env   # then edit values to match your local Postgres
 ```
 
-## Compile and run the project
+`.env` variables:
+
+| Variable | Description |
+|---|---|
+| `DB_HOST` | Postgres host (e.g. `localhost`) |
+| `DB_PORT` | Postgres port (e.g. `5432`) |
+| `DB_USERNAME` | Postgres user |
+| `DB_PASSWORD` | Postgres password |
+| `DB_NAME` | Database name (e.g. `todo_db`) — the database must already exist; TypeORM only creates tables, not the database |
+| `PORT` | Present in `.env` but currently unused — the server always listens on port `3001` (hardcoded in `src/main.ts`) |
+
+## Running
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+npm run start:dev   # watch mode, http://localhost:3001
+npm run start        # single run
+npm run start:prod   # runs pending migrations, then starts
 ```
 
-## Run tests
+- Swagger UI: `http://localhost:3001/api-docs`
+- CORS is restricted to `http://localhost:3000` (the frontend dev server origin) in `src/main.ts`.
+- Global `ValidationPipe` runs with `transform: true`, so DTO default values (e.g. pagination `page`/`limit`) are applied automatically when a request omits them.
+
+## API overview
+
+### Users — `/users`
+
+| Method | Path | Description |
+|---|---|---|
+| POST | `/users` | Create a user (`email`, `firstName`, `lastName`) |
+| GET | `/users` | List all users |
+| GET | `/users/:id` | Get one user by id |
+| PATCH | `/users/:id` | Update a user |
+| DELETE | `/users/:id` | Soft-delete a user |
+
+### Todos — `/todos`
+
+| Method | Path | Description |
+|---|---|---|
+| POST | `/todos` | Create a todo (`title`, `dueDate`, `userId` required; `description`, `priority` optional) |
+| GET | `/todos?page=&limit=` | Paginated list — returns `{ data, page, limit, total }` |
+| PATCH | `/todos/:id` | Update a todo (title, description, priority, status, dueDate, userId) |
+| DELETE | `/todos/:id` | Soft-delete a todo |
+
+A `Todo` belongs to a `User` via `userId` (`ManyToOne`, nullable, `onDelete: SET NULL`). A `User` has many `Todo`s.
+
+See [`../WORKFLOW.md`](../WORKFLOW.md) for how these routes are consumed by the frontend and how the two apps work together.
+
+## Testing
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+npm run test       # unit tests
+npm run test:e2e   # e2e tests
+npm run test:cov   # coverage
 ```
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
-```
-
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
-
-## Resources
-
-Check out a few resources that may come in handy when working with NestJS:
-
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
